@@ -3,35 +3,29 @@
 #include <vector>
 #include <queue>
 
+using namespace std;
+
 #define MAX_NODE 20001
 #define INF 1000000000
 
-typedef struct Vertex
+typedef pair<int, int> Pair;
+
+typedef struct Priority
 {
-	int index_;
-	int dist_;
-
-	bool operator <(const Vertex& other) const
+	bool operator()(const Pair& p1, const Pair& p2) const
 	{
-		return this->dist_ > other.dist_;
+		return p1.second > p2.second;
 	}
-} Vertex;
+} Priority;
 
-// graph infos
-std::vector<std::pair<int, int>> graph[MAX_NODE];
+vector<Pair> graph[MAX_NODE];
 int u_count, v_count;
 int target_node;
-// dijkstra infos
-int min_dists[MAX_NODE];
-std::priority_queue<Vertex> calc_queue;
 
-void CalcMinWeights();
+vector<int> Dijkstra();
 
 int main()
 {
-	// 초기화
-	std::fill_n(min_dists, MAX_NODE, INF);
-
 	// 입력
 	scanf("%d%d%d", &u_count, &v_count, &target_node);
 	int u, v, w;
@@ -41,43 +35,46 @@ int main()
 		graph[u].push_back({ v, w });
 	}
 
-	min_dists[target_node] = 0;
-	for (int i = 1; i <= u_count; i++)
-		calc_queue.push({ i, min_dists[i] });
-
 	// 계산
-	CalcMinWeights();
+	vector<int> dists = Dijkstra();
 
 	// 출력
 	for (int i = 1; i <= u_count; i++)
 	{
-		if (min_dists[i] >= INF)
+		if (dists[i] >= INF)
 			printf("INF\n");
 		else
-			printf("%d\n", min_dists[i]);
+			printf("%d\n", dists[i]);
 	}
 
 	return 0;
 }
 
-void CalcMinWeights()
+vector<int> Dijkstra()
 {
-	Vertex top = calc_queue.top();
-	calc_queue.pop();
+	priority_queue<Pair, vector<Pair>, Priority> visited;
+	vector<int> dists(u_count + 1, INF);
 
-	while (!calc_queue.empty())
+	dists[target_node] = 0;
+	visited.push({ target_node, 0 });
+
+	while (!visited.empty())
 	{
-		const std::vector<std::pair<int, int>>& dists = graph[top.index_];
-		for (int i = 0; i < dists.size(); i++)
+		Pair top = visited.top();
+		visited.pop();
+
+		if (top.second != dists[top.first])
+			continue;
+
+		for (auto v : graph[top.first])
 		{
-			if (min_dists[dists[i].first] > min_dists[top.index_] + dists[i].second)
+			if (dists[v.first] > dists[top.first] + v.second)
 			{
-				min_dists[dists[i].first] = min_dists[top.index_] + dists[i].second;
-				calc_queue.push({ dists[i].first, min_dists[dists[i].first] });
+				dists[v.first] = dists[top.first] + v.second;
+				visited.push({ v.first, dists[v.first] });
 			}
 		}
-
-		top = calc_queue.top();
-		calc_queue.pop();
 	}
+
+	return dists;
 }
