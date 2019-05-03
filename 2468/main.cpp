@@ -6,11 +6,16 @@
 
 using namespace std;
 
+typedef pair<int, int> Pair;
+Pair operator+(const Pair& p1, const Pair& p2)
+{
+	return { p1.first + p2.first, p1.second + p2.second };
+}
+
 int n;
 int map[MAX][MAX];
 int max_value = 0;
-int dir_x[4] = { 1, 0, -1, 0 };
-int dir_y[4] = { 0, 1, 0, -1 };
+Pair dir[4] = { {0, 1}, {1, 0}, {0, -1}, {-1, 0} };
 
 int CalcAreaNum(int height);
 
@@ -35,8 +40,6 @@ int main()
 		int area_num = CalcAreaNum(i);
 		if (max_area_num <= area_num)
 			max_area_num = area_num;
-		else
-			break;
 	}
 
 	// Ãâ·Â
@@ -58,24 +61,23 @@ int CalcAreaNum(int height)
 			if (visited[i][j] != 0 || map[i][j] <= height)
 				continue;
 
-			queue<pair<int, int>> calc_queue;
+			queue<Pair> calc_queue;
 			visited[i][j] = 1;
 			calc_queue.push({ i, j });
 			while (!calc_queue.empty())
 			{
-				pair<int, int> pos = calc_queue.front();
+				Pair pos = calc_queue.front();
 				calc_queue.pop();
 				for (int k = 0; k < 4; k++)
 				{
-					int next_x = pos.second + dir_x[k];
-					int next_y = pos.first + dir_y[k];
-					if (0 <= next_y && next_y < n &&
-						0 <= next_x && next_x < n &&
-						visited[next_y][next_x] == 0 &&
-						map[next_y][next_x] > height)
+					Pair next_pos = pos + dir[k];
+					if (0 <= next_pos.first && next_pos.first < n &&
+						0 <= next_pos.second && next_pos.second < n &&
+						visited[next_pos.first][next_pos.second] == 0 &&
+						map[next_pos.first][next_pos.second] > height)
 					{
-						calc_queue.push({ next_y, next_x });
-						visited[next_y][next_x] = 1;
+						calc_queue.push(next_pos);
+						visited[next_pos.first][next_pos.second] = 1;
 					}
 				}
 			}
