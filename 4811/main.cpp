@@ -1,45 +1,31 @@
 #include <stdio.h>
-#include <memory.h>
 
-int calc_pill(int index, int full_pill_count, int half_pill_count, char str[31])
-{
-	if (full_pill_count == 0 && half_pill_count == 0)
-	{
-		str[index] = '\0';
-		printf("%s\n", str);
-		return 1;
-	}
-	else
-	{
-		int result = 0;
-
-		if (full_pill_count > 0)
-		{
-			char new_str[31];
-			memcpy(new_str, str, sizeof(char) * 31);
-			new_str[index] = 'W';
-			result += calc_pill(index + 1, full_pill_count - 1, half_pill_count + 1, new_str);
-		}
-		if (half_pill_count > 0)
-		{
-			char new_str[31];
-			memcpy(new_str, str, sizeof(char) * 31);
-			new_str[index] = 'H';
-			result += calc_pill(index + 1, full_pill_count, half_pill_count - 1, new_str);
-		}
-
-		return result;
-	}
-}
+#define MAX_N 30
 
 int main()
 {
-	int n;
+	while (true)
+	{
+		int n;
+		long long num_counts[MAX_N] = { 0, };
+		long long result = 0;
+		num_counts[0] = 1L; num_counts[1] = 1L;
 
-	scanf("%d", &n);
+		// 입력
+		scanf("%d", &n);
+		if (n == 0)
+			break;
 
-	char str[31];
-	printf("%d\n", calc_pill(0, n, 0, str));
+		// 계산
+		for (int i = 2; i < n - 1; i++) // 각 숫자 별 개수
+			for (int j = 0; j < i; j++)
+				num_counts[j + 1] += num_counts[j];
+		for (int i = 0; i < n - 1; i++) // 숫자 개수로 총합 집계
+			result += num_counts[i] * (n - i);
+
+		// 출력
+		printf("%lld\n", result == 0 ? 1 : result);
+	}
 
 	return 0;
 }
