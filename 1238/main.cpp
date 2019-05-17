@@ -1,5 +1,7 @@
 #include <stdio.h>
 
+#define INF 0x7fffffff
+
 template <class T>
 class vector
 {
@@ -18,6 +20,15 @@ public:
 	~vector()
 	{
 		delete[] arr;
+	}
+
+	vector(const vector<T>& other)
+	{
+		capacity = other.capacity;
+		count = other.count;
+		arr = new T[capacity];
+		for (int i = 0; i < count; i++)
+			arr[i] = other.arr[i];
 	}
 
 	void push_back(const T& obj)
@@ -48,14 +59,24 @@ public:
 		return arr[--count];
 	}
 
+	T operator[] (int index) const
+	{
+		return arr[index];
+	}
+
 	T& operator[] (int index)
 	{
 		return arr[index];
 	}
 
-	int get_count()
+	int get_count() const
 	{
 		return count;
+	}
+
+	void set_count(int count)
+	{
+		this->count = count;
 	}
 
 private:
@@ -84,7 +105,7 @@ public:
 		quicksort(nodes, 0, nodes.get_count() - 1);
 	}
 
-	T top()
+	T top() const
 	{
 		return nodes[nodes.get_count() - 1];
 	}
@@ -92,6 +113,16 @@ public:
 	T pop()
 	{
 		return nodes.pop_back();
+	}
+
+	int get_count() const
+	{
+		return nodes.get_count();
+	}
+
+	bool is_empty() const
+	{
+		return nodes.get_count() == 0;
 	}
 
 private:
@@ -103,8 +134,8 @@ private:
 		while (left < right)
 		{
 			// top, pop 함수가 맨 뒤의 인덱스부터 뽑기때문에 역순 정렬
-			while (left < right && arr[right] < arr[pivot]) right--;
-			while (left < right && arr[pivot] < arr[left]) left++;
+			while (left < right && arr[right] <= arr[pivot]) right--;
+			while (left < right && arr[pivot] <= arr[left]) left++;
 			swap(arr[left], arr[right]);
 		}
 		swap(arr[pivot], arr[left]);
@@ -129,14 +160,46 @@ typedef struct Vertex
 	int node;
 	int weight;
 
-	bool operator < (const Vertex& other)
+	// 가중치 순 정렬
+	bool operator <= (const Vertex& other)
 	{
-		return weight < other.weight;
+		return weight <= other.weight;
 	}
 } Vertex;
 
+int n, m, x;
 vector<vector<Vertex>> graph;
-priority_queue<Vertex> dists;
+
+// start_node로부터 다른 모든 노드들까지의 가중치 반환
+vector<int> dijkstra(int start_node)
+{
+	vector<int> result;
+	for (int i = 0; i < graph.get_count(); i++)
+		result.push_back(INF);
+	result[start_node] = 0;
+	priority_queue<Vertex> dist_queue;
+	dist_queue.push({ start_node, 0 });
+
+	while (!dist_queue.is_empty())
+	{
+		Vertex top = dist_queue.pop();
+		
+		const vector<Vertex>& target_graph = graph[top.node];
+		for (int i = 0; i < target_graph.get_count(); i++)
+		{
+			if (top.weight != result[top.node])
+				continue;
+
+			if (target_graph[i].weight + top.weight < result[target_graph[i].node])
+			{
+				result[target_graph[i].node] = target_graph[i].weight + top.weight;
+				dist_queue.push({ target_graph[i].node, result[target_graph[i].node] });
+			}
+		}
+	}
+
+	return result;
+}
 
 int main()
 {
@@ -151,6 +214,23 @@ int main()
 	for (int i = 0; i < arr_size; i++)
 		printf("%d ", test.pop());
 	printf("\n");
+
+	// 입력
+	scanf("%d%d%d", &n, &m, &x);
+	graph.set_count(n);
+	for (int i = 0; i < m; i++)
+	{
+		int from, to, time;
+		scanf("%d%d%d", &from, &to, &time);
+		graph[from - 1].push_back({ to - 1, time });
+	}
+
+	// 계산
+	vector<int> result = dijkstra(x - 1);
+
+	// 출력
+	for (int i = 0; i < result.get_count(); i++)
+		printf("%d\n", result[i]);
 
 	return 0;
 }
