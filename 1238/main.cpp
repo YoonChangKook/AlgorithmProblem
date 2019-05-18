@@ -180,7 +180,7 @@ int n, m, x;
 int graph[MAX_NODE_COUNT][MAX_NODE_COUNT] = { 0, };
 
 // start_node로부터 다른 모든 노드들까지의 가중치 반환
-vector<int> dijkstra(int start_node)
+vector<int> dijkstra(int start_node, bool go_home)
 {
 	vector<int> result;
 	for (int i = 0; i < n; i++)
@@ -192,15 +192,21 @@ vector<int> dijkstra(int start_node)
 	while (!dist_queue.is_empty())
 	{
 		Vertex top = dist_queue.pop();
-		
+
 		for (int i = 0; i < n; i++)
 		{
-			if (graph[top.node][i] == 0 || top.weight != result[top.node])
+			int target_weight;
+			if (go_home)
+				target_weight = graph[top.node][i];
+			else
+				target_weight = graph[i][top.node];
+
+			if (target_weight == 0 || top.weight != result[top.node])
 				continue;
 
-			if (graph[top.node][i] + top.weight < result[i])
+			if (target_weight + top.weight < result[i])
 			{
-				result[i] = graph[top.node][i] + top.weight;
+				result[i] = target_weight + top.weight;
 				dist_queue.push({ i, result[i] });
 			}
 		}
@@ -233,16 +239,16 @@ int main()
 	}
 
 	// 계산
-	vector<int> result = dijkstra(x - 1);
+	vector<int> to_party = dijkstra(x - 1, false);
+	vector<int> from_party = dijkstra(x - 1, true);
 	int max = 0;
 	for (int i = 0; i < n; i++)
 	{
 		if (i == x - 1)
 			continue;
 
-		result[i] += dijkstra(i)[x - 1];
-		if (max < result[i])
-			max = result[i];
+		if (max < from_party[i] + to_party[i])
+			max = from_party[i] + to_party[i];
 	}
 
 	// 출력
