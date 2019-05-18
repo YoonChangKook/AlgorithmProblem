@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #define INF 0x7fffffff
+#define MAX_NODE_COUNT 1000
 
 template <class T>
 class vector
@@ -176,13 +177,13 @@ typedef struct Vertex
 } Vertex;
 
 int n, m, x;
-vector<vector<Vertex>> graph;
+int graph[MAX_NODE_COUNT][MAX_NODE_COUNT] = { 0, };
 
 // start_node로부터 다른 모든 노드들까지의 가중치 반환
 vector<int> dijkstra(int start_node)
 {
 	vector<int> result;
-	for (int i = 0; i < graph.get_count(); i++)
+	for (int i = 0; i < n; i++)
 		result.push_back(INF);
 	result[start_node] = 0;
 	priority_queue<Vertex> dist_queue;
@@ -192,16 +193,15 @@ vector<int> dijkstra(int start_node)
 	{
 		Vertex top = dist_queue.pop();
 		
-		const vector<Vertex>& target_graph = graph[top.node];
-		for (int i = 0; i < target_graph.get_count(); i++)
+		for (int i = 0; i < n; i++)
 		{
-			if (top.weight != result[top.node])
+			if (graph[top.node][i] == 0 || top.weight != result[top.node])
 				continue;
 
-			if (target_graph[i].weight + top.weight < result[target_graph[i].node])
+			if (graph[top.node][i] + top.weight < result[i])
 			{
-				result[target_graph[i].node] = target_graph[i].weight + top.weight;
-				dist_queue.push({ target_graph[i].node, result[target_graph[i].node] });
+				result[i] = graph[top.node][i] + top.weight;
+				dist_queue.push({ i, result[i] });
 			}
 		}
 	}
@@ -225,12 +225,11 @@ int main()
 
 	// 입력
 	scanf("%d%d%d", &n, &m, &x);
-	graph.set_count(n);
 	for (int i = 0; i < m; i++)
 	{
 		int from, to, time;
 		scanf("%d%d%d", &from, &to, &time);
-		graph[from - 1].push_back({ to - 1, time });
+		graph[from - 1][to - 1] = time;
 	}
 
 	// 계산
