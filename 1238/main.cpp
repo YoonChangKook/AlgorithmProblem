@@ -33,14 +33,14 @@ public:
 
 	void push_back(const T& obj)
 	{
-		if (capacity <= count - 1)
+		if (capacity <= count)
 			reallocate(capacity * 2);
 		arr[count++] = obj;
 	}
 
 	void insert(const T& obj, int index)
 	{
-		if (capacity <= count - 1)
+		if (capacity - 1 <= count)
 			reallocate(capacity * 2);
 
 		for (int i = count; i > index; i--)
@@ -76,6 +76,14 @@ public:
 
 	void set_count(int count)
 	{
+		if (capacity < count)
+		{
+			int new_capacity = capacity;
+			while (new_capacity < count)
+				new_capacity *= 2;
+			reallocate(new_capacity);
+		}
+
 		this->count = count;
 	}
 
@@ -227,10 +235,19 @@ int main()
 
 	// 계산
 	vector<int> result = dijkstra(x - 1);
+	int max = 0;
+	for (int i = 0; i < n; i++)
+	{
+		if (i == x - 1)
+			continue;
+
+		result[i] += dijkstra(i)[x - 1];
+		if (max < result[i])
+			max = result[i];
+	}
 
 	// 출력
-	for (int i = 0; i < result.get_count(); i++)
-		printf("%d\n", result[i]);
+	printf("%d\n", max);
 
 	return 0;
 }
