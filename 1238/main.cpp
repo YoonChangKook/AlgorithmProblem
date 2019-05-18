@@ -177,10 +177,11 @@ typedef struct Vertex
 } Vertex;
 
 int n, m, x;
-int graph[MAX_NODE_COUNT][MAX_NODE_COUNT] = { 0, };
+vector<Vertex> row_major_graph[MAX_NODE_COUNT];
+vector<Vertex> column_major_graph[MAX_NODE_COUNT];
 
 // start_node로부터 다른 모든 노드들까지의 가중치 반환
-vector<int> dijkstra(int start_node, bool go_home)
+vector<int> dijkstra(int start_node, bool to_party)
 {
 	vector<int> result;
 	for (int i = 0; i < n; i++)
@@ -192,22 +193,17 @@ vector<int> dijkstra(int start_node, bool go_home)
 	while (!dist_queue.is_empty())
 	{
 		Vertex top = dist_queue.pop();
+		const vector<Vertex>& target_graph = to_party ? column_major_graph[top.node] : row_major_graph[top.node];
 
-		for (int i = 0; i < n; i++)
+		if (top.weight != result[top.node])
+			continue;
+
+		for (int i = 0; i < target_graph.get_count(); i++)
 		{
-			int target_weight;
-			if (go_home)
-				target_weight = graph[top.node][i];
-			else
-				target_weight = graph[i][top.node];
-
-			if (target_weight == 0 || top.weight != result[top.node])
-				continue;
-
-			if (target_weight + top.weight < result[i])
+			if (target_graph[i].weight + top.weight < result[target_graph[i].node])
 			{
-				result[i] = target_weight + top.weight;
-				dist_queue.push({ i, result[i] });
+				result[target_graph[i].node] = target_graph[i].weight + top.weight;
+				dist_queue.push({ target_graph[i].node, result[target_graph[i].node] });
 			}
 		}
 	}
@@ -217,30 +213,19 @@ vector<int> dijkstra(int start_node, bool go_home)
 
 int main()
 {
-	// 우선순위 큐, 벡터 테스트
-	priority_queue<int> test;
-	int arr[] = { 5, 3, 2, 1, 4 };
-	int arr_size = sizeof(arr) / sizeof(int);
-
-	for (int i = 0; i < arr_size; i++)
-		test.push(arr[i]);
-
-	for (int i = 0; i < arr_size; i++)
-		printf("%d ", test.pop());
-	printf("\n");
-
 	// 입력
 	scanf("%d%d%d", &n, &m, &x);
 	for (int i = 0; i < m; i++)
 	{
 		int from, to, time;
 		scanf("%d%d%d", &from, &to, &time);
-		graph[from - 1][to - 1] = time;
+		row_major_graph[from - 1].push_back({ to - 1, time });
+		column_major_graph[to - 1].push_back({ from - 1, time });
 	}
 
 	// 계산
-	vector<int> to_party = dijkstra(x - 1, false);
-	vector<int> from_party = dijkstra(x - 1, true);
+	vector<int> to_party = dijkstra(x - 1, true);
+	vector<int> from_party = dijkstra(x - 1, false);
 	int max = 0;
 	for (int i = 0; i < n; i++)
 	{
