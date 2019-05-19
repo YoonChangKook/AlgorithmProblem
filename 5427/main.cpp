@@ -1,75 +1,10 @@
 #include <stdio.h>
+#include <queue>
 
 #define MAX_TEST_CASE 100
 #define MAX_MAP_WIDTH 1001
 
-template <class T>
-class queue
-{
-private:
-	T* arr;
-	int capacity;
-	int count;
-	int start;
-	int rear;
-
-public:
-	queue()
-		: capacity(100), count(0), start(0), rear(0)
-	{
-		arr = new T[capacity];
-	}
-
-	~queue()
-	{
-		delete[] arr;
-	}
-
-	void push_back(const T& item)
-	{
-		if (capacity <= count)
-			reallocate(capacity * 2);
-
-		arr[rear] = item;
-		rear = (rear + 1) % capacity;
-		count++;
-	}
-
-	const T& front() const
-	{
-		return arr[this->start];
-	}
-
-	void pop()
-	{
-		start = (start + 1) % capacity;
-		count--;
-	}
-
-	int size() const
-	{
-		return count;
-	}
-
-	bool empty() const
-	{
-		return start == rear;
-	}
-
-private:
-	void reallocate(int new_capacity)
-	{
-		T* new_arr = new T[new_capacity];
-		for (int i = 0; i < count; i++)
-			new_arr[i] = arr[(start + i) % capacity];
-		delete[] arr;
-
-		arr = new_arr;
-		capacity = new_capacity;
-		start = 0;
-		rear = count;
-	}
-};
+using namespace std;
 
 enum CELL {
 	EMPTY = '.',
@@ -128,7 +63,7 @@ int calc_escape_seconds(queue<Pos>& path_finder, queue<Pos>& fires)
 					map[next_fire.y][next_fire.x] == CELL::START)
 				{
 					map[next_fire.y][next_fire.x] = CELL::FIRE;
-					fires.push_back(next_fire);
+					fires.push(next_fire);
 				}
 			}
 		}
@@ -150,7 +85,7 @@ int calc_escape_seconds(queue<Pos>& path_finder, queue<Pos>& fires)
 				if (map[next.y][next.x] == CELL::EMPTY)
 				{
 					map[next.y][next.x] = CELL::START;
-					path_finder.push_back(next);
+					path_finder.push(next);
 				}
 			}
 		}
@@ -179,11 +114,11 @@ int main()
 				switch (map[j][k])
 				{
 				case CELL::START:
-					path_finder.push_back({ k, j, 0 });
+					path_finder.push({ k, j, 0 });
 					break;
 
 				case CELL::FIRE:
-					fires.push_back({ k, j, 0 });
+					fires.push({ k, j, 0 });
 					break;
 				}
 			}
