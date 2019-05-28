@@ -1,89 +1,6 @@
 #include <stdio.h>
 
 #define MAX_FRIEND_COUNT 10
-#define MAX_RELATIONSHIP_COUNT 45
-
-template <class T>
-class vector
-{
-private:
-	T* arr;
-	int capacity;
-	int count;
-
-public:
-	vector()
-		: capacity(MAX_FRIEND_COUNT), count(0)
-	{
-		arr = new T[capacity];
-	}
-
-	~vector()
-	{
-		delete[] arr;
-	}
-
-	vector(const vector<T>& other)
-		: capacity(other.capacity), count(other.count)
-	{
-		arr = new T[capacity];
-		for (int i = 0; i < count; i++)
-			arr[i] = other.arr[i];
-	}
-
-	void push_back(const T& item)
-	{
-		if (capacity <= count)
-			reallocate(capacity * 2);
-		arr[count++] = item;
-	}
-
-	T pop_back()
-	{
-		return arr[--count];
-	}
-
-	T& operator[] (int index)
-	{
-		return arr[index];
-	}
-
-	const T& operator[] (int index) const
-	{
-		return arr[index];
-	}
-
-	int size() const
-	{
-		return count;
-	}
-
-	bool contains(const T& item) const
-	{
-		for (int i = 0; i < count; i++)
-			if (arr[i] == item)
-				return true;
-
-		return false;
-	}
-
-private:
-	void reallocate(int new_capacity)
-	{
-		T* new_arr = new T[new_capacity];
-		for (int i = 0; i < count; i++)
-			new_arr[i] = arr[i];
-		delete[] arr;
-
-		arr = new_arr;
-		capacity = new_capacity;
-	}
-};
-
-typedef struct Friend {
-	int f1;
-	int f2;
-} Friend;
 
 int get_group_count(const int relations[MAX_FRIEND_COUNT][MAX_FRIEND_COUNT], int visited[MAX_FRIEND_COUNT], int current_pair_count, int start, int n)
 {
@@ -108,6 +25,23 @@ int get_group_count(const int relations[MAX_FRIEND_COUNT][MAX_FRIEND_COUNT], int
 	return result;
 }
 
+/*
+	- Test Case
+
+	3
+	2 1
+	0 1
+	4 6
+	0 1 1 2 2 3 3 0 0 2 1 3
+	6 10
+	0 1 0 2 1 2 1 3 1 4 2 3 2 4 3 4 3 5 4 5
+
+	- Result
+
+	1
+	3
+	4
+*/
 int main()
 {
 	// ют╥б
