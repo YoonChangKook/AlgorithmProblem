@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.572
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29001.49
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "17143", "17143\17143.vcxproj", "{F0C9235C-76D2-4780-BA51-DF50A6D69E23}"
 EndProject
@@ -52,6 +52,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BoardCover", "BoardCover\BoardCover.vcxproj", "{8224A7DE-466B-4BB2-A887-6AAEDD05F8D4}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Heap", "Heap\Heap.vcxproj", "{93E22833-5EBC-4DE5-9B9D-FB37D5F1DA59}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Budget", "Budget\Budget.vcxproj", "{7F95FAAC-F197-4D0A-A312-C300D2DDF4CB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -261,6 +263,14 @@ Global
 		{93E22833-5EBC-4DE5-9B9D-FB37D5F1DA59}.Release|x64.Build.0 = Release|x64
 		{93E22833-5EBC-4DE5-9B9D-FB37D5F1DA59}.Release|x86.ActiveCfg = Release|Win32
 		{93E22833-5EBC-4DE5-9B9D-FB37D5F1DA59}.Release|x86.Build.0 = Release|Win32
+		{7F95FAAC-F197-4D0A-A312-C300D2DDF4CB}.Debug|x64.ActiveCfg = Debug|x64
+		{7F95FAAC-F197-4D0A-A312-C300D2DDF4CB}.Debug|x64.Build.0 = Debug|x64
+		{7F95FAAC-F197-4D0A-A312-C300D2DDF4CB}.Debug|x86.ActiveCfg = Debug|Win32
+		{7F95FAAC-F197-4D0A-A312-C300D2DDF4CB}.Debug|x86.Build.0 = Debug|Win32
+		{7F95FAAC-F197-4D0A-A312-C300D2DDF4CB}.Release|x64.ActiveCfg = Release|x64
+		{7F95FAAC-F197-4D0A-A312-C300D2DDF4CB}.Release|x64.Build.0 = Release|x64
+		{7F95FAAC-F197-4D0A-A312-C300D2DDF4CB}.Release|x86.ActiveCfg = Release|Win32
+		{7F95FAAC-F197-4D0A-A312-C300D2DDF4CB}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
